@@ -12,41 +12,45 @@ const Filter = ({ showThese, handleFilterChange }) => {
   )
 }
 
-const Country = ({ name }) => {
-  return(
-    <p>{name}</p>
+const Country = ({ name, countries, onSelect }) => {
+  return (
+    <p>{name}
+      <button onClick={onSelect}>
+        show
+      </button>
+    </p>
   )
 }
 
-const SingleCountry = ({ countries, filtered }) => {
-  const indeksi = countries.map(country => country.name.common).indexOf(filtered[0])
+const SingleCountry = ({ countries, name }) => {
+  const indeksi = countries.map(country => country.name.common).indexOf(name)
   const maa = countries[indeksi]
 
   return (
     <div>
-      <h1>{filtered[0]}</h1>
+      <h1>{name}</h1>
       <p>capital {maa.capital}</p>
       <p>area {maa.area}</p>
       <h2>languages:</h2>
       <ul>
-        {Object.values(maa.languages).map(kieli => 
+        {Object.values(maa.languages).map(kieli =>
           <li key={kieli}>
             {kieli}
           </li>
         )}
       </ul>
-      <img src={maa.flags.png} alt={filtered}></img>
+      <img src={maa.flags.png} alt={name}></img>
     </div>
   )
 }
 
-const Countries = ({ countries, showThese }) => {
-  
+const Countries = ({ countries, showThese, onSelect }) => {
+
   const filtered =
     countries
       .map(country => country.name.common)
       .filter(name => name.toLowerCase()
-      .includes(showThese.toLowerCase()))
+        .includes(showThese.toLowerCase()))
 
   if (filtered.length > 10) {
     return (
@@ -54,17 +58,17 @@ const Countries = ({ countries, showThese }) => {
     )
   }
 
-  if (filtered.length === 1 ) {
+  if (filtered.length === 1) {
     return (
-      <SingleCountry filtered={filtered} countries={countries} showThese={showThese} />
+      <SingleCountry name={filtered[0]} countries={countries} />
     )
   }
 
   return (
     filtered
       .map(country =>
-        <Country key={country} name={country} />
-    )
+        <Country key={country} name={country} countries={countries} onSelect={() => onSelect(country)} />
+      )
   )
 }
 
@@ -87,7 +91,7 @@ const App = () => {
   return (
     <div>
       <Filter showThese={showThese} handleFilterChange={handleFilterChange} />
-      <Countries countries={countries} showThese={showThese} />
+      <Countries countries={countries} showThese={showThese} onSelect={setShowThese} />
     </div>
   )
 
