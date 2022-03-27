@@ -22,13 +22,27 @@ const Country = ({ name, countries, onSelect }) => {
   )
 }
 
-const SingleCountry = ({ countries, name }) => {
-  const indeksi = countries.map(country => country.name.common).indexOf(name)
-  const maa = countries[indeksi]
+const SingleCountry = ({ maa }) => {
+
+  const [weather, setWeather] = useState()
+
+  useEffect(() => {
+    const [lat, lng] = maa.capitalInfo.latlng
+    const api_key = process.env.REACT_APP_API_KEY
+    axios
+      .get('https://api.openweathermap.org/data/2.5/weather?lat=' + lat + '&lon=' + lng + '&appid=' + api_key + '&units=metric')
+      .then(response => {
+        setWeather(response.data)
+      })
+  }, [maa])
+
+  if (!weather) return null
+
+  const imgurl = 'http://openweathermap.org/img/wn/' + weather.weather[0].icon + '@2x.png'
 
   return (
     <div>
-      <h1>{name}</h1>
+      <h1>{maa.name.common}</h1>
       <p>capital {maa.capital}</p>
       <p>area {maa.area}</p>
       <h2>languages:</h2>
@@ -39,7 +53,11 @@ const SingleCountry = ({ countries, name }) => {
           </li>
         )}
       </ul>
-      <img src={maa.flags.png} alt={name}></img>
+      <img src={maa.flags.png} alt={maa.name.common}></img>
+      <h2>Weather in {maa.capital}</h2>
+      <p>temperature {weather.main.temp} Celsius</p>
+      <img src={imgurl} alt='saa'></img>
+      <p>wind {weather.wind.speed} m/s</p>
     </div>
   )
 }
@@ -59,8 +77,10 @@ const Countries = ({ countries, showThese, onSelect }) => {
   }
 
   if (filtered.length === 1) {
+    const indeksi = countries.map(country => country.name.common).indexOf(filtered[0])
+    const maa = countries[indeksi]
     return (
-      <SingleCountry name={filtered[0]} countries={countries} />
+      <SingleCountry maa={maa} />
     )
   }
 
