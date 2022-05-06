@@ -1,7 +1,9 @@
 POST http://localhost:3001/api/notes/
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2MjczYWQ5ZjI1MjEwOTQ1MjliZTc5YzYiLCJpYXQiOjE2NTE3NTQxMzd9.VJG5Gjk1XgscM6jIua9CF24KdekObVavthPJvOHTI3Y
 
 {
-    "content": "Postman is a good tool for testing a REST-api",
-    "important": true
+    "content": "User id of the note creator is at the start sent along the request",
+    "important": true,
+    "userId": "6273ad9f2521094529be79c6"
 }
