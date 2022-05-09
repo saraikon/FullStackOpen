@@ -1,0 +1,11 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRva2Frw6R5dHTDpGrDpCIsImlkIjoiNjI3M2U2OTYzYjQzMWUyZDkyNjU2MmQzIiwiaWF0IjoxNjUxNzY0MzA2fQ.kZ4kDxArOJDC7-qyciEZUuRiVolPHPc_smESUqWtJHU
+
+{
+    "id": "9759827349872984",
+    "title": "PlzWork2",
+    "author": "Sara2",
+    "url": "wwww.osoite123.fi",
+    "likes": 20
+}
