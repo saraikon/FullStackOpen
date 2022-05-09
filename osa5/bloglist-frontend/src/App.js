@@ -9,7 +9,7 @@ import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
@@ -17,7 +17,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -55,9 +55,9 @@ const App = () => {
     setUser(null)
     window.localStorage.clear()
     setErrorMessage('Logged out')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+    setTimeout(() => {
+      setErrorMessage(null)
+    }, 5000)
   }
 
   const blogFormRef = useRef()
@@ -67,25 +67,26 @@ const App = () => {
     blogService
       .create(noteObject)
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
+        const newBlog = { ...returnedBlog, user: user }
+        setBlogs(blogs.concat(newBlog))
       })
   }
 
   const likeBlog = id => {
     const blog = blogs.find(n => n.id === id)
     const newLikes = blog.likes + 1
-    console.log(newLikes)
     const changedBlog = { ...blog, likes: newLikes }
-  
+
     blogService
       .update(id, changedBlog)
       .then(returnedBlog => {
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : { ...blog, likes: returnedBlog.likes }))
       })
       .catch(error => {
         setErrorMessage(
           `Blog '${blog.title}' was already removed from server`
         )
+        console.log(error)
         setTimeout(() => {
           setErrorMessage(null)
         }, 5000)
@@ -98,9 +99,9 @@ const App = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author} `)) {
       blogService
         .remove(blog.id)
-        .then(deletedBlog => {
+        .then(
           setBlogs(blogs.filter(b => b.id !== id))
-        })
+        )
     }
   }
 
@@ -112,7 +113,7 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-              <input
+            <input
               type="text"
               value={username}
               name="Username"
@@ -121,7 +122,7 @@ const App = () => {
           </div>
           <div>
             password
-              <input
+            <input
               type="password"
               value={password}
               name="Password"
@@ -129,7 +130,7 @@ const App = () => {
             />
           </div>
           <button type="submit">login</button>
-        </form>      
+        </form>
       </div>
     )
   }
@@ -146,13 +147,12 @@ const App = () => {
         />
       </Togglable>
       {blogs
-        .sort((a, b) => {return a.likes - b.likes})
-        .reverse()
+        .sort((a, b) => {return b.likes - a.likes})
         .map(blog =>
-        <div>
-          <Blog key={blog.id} blog={blog} like={() => likeBlog(blog.id)} user={user} remove={() => removeBlog(blog)} /> 
-        </div>
-      )}
+          <div key={blog.id}>
+            <Blog blog={blog} like={() => likeBlog(blog.id)} user={user} remove={() => removeBlog(blog)} />
+          </div>
+        )}
     </div>
   )
 
